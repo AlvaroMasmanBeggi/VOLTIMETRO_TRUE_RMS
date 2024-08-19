@@ -12,10 +12,11 @@
 #define EntradaTension GPIO_NUM_32
 
 int i = 0;
-int lectura = 0;
-int numero_muestras = 64;
+float lectura = 0;
+int numero_muestras = 300;
 float volt_value = 0;
-int valor_pico_inst=  0;
+float valor_rms, valor_pico;
+int valor_inst = 0;
 
 void config(){
     adc1_config_width(ADC_WIDTH_BIT_12);                         // Configura el ADC a 12 bits
@@ -26,14 +27,20 @@ void config(){
 
 void lectura_tensionAC(){
     lectura = 0;
+    valor_inst = 0;
     for (i = 0; i < numero_muestras; i++){
-           lectura = adc1_get_raw(ADC1_CHANNEL_4);
+           lectura = ((adc1_get_raw(ADC1_CHANNEL_4)*3.3)/4096)+0.11;
            vTaskDelay(10 / portTICK_PERIOD_MS);        // Retardo para estabilizar
-           
+           valor_inst = lectura * lectura + valor_inst;
      }
-     lectura /= numero_muestras;
+    valor_inst /= numero_muestras;
+    valor_rms = sqrt(valor_inst);
+    valor_pico = valor_rms * 1.4142;
 
+    printf("Valor RMS: %.2f\n", valor_rms);
+    printf("Valor pico: %.2f\n", valor_pico);
 
+    vTaskDelay(1000 / portTICK_PERIOD_MS); // Espera antes de la próxima lectura
 }
 
 void lectura_tensionDC(){
@@ -50,14 +57,12 @@ void lectura_tensionDC(){
         volt_value = ((lectura * 3.3) / 4096) + 0.11;
         printf("Valor de voltaje: %.2f\n", volt_value);
 
-        vTaskDelay(2000 / portTICK_PERIOD_MS); // Espera antes de la próxima lectura
+        vTaskDelay(1000 / portTICK_PERIOD_MS); // Espera antes de la próxima lectura
     }
 }
 
 void app_main() {
     config();
-    
-    lectura_tensionDC();
     
 
 }
