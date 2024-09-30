@@ -11,7 +11,7 @@
 //El pin de lectura DC corresponde a ADC1_CHANNEL_4 y es el pin 32 de la esp
 //El pin de lectura AC corresponde a ADC1_CHANNEL_6 y es el pin 34 de la esp
 
-//Pines de control
+//Pines de control 
 //Pin de 56k es el 5
 //Pin de 100k es el 18
 //Pin de 560k es el 19
@@ -52,16 +52,24 @@ void config(){
     adc1_config_width(ADC_WIDTH_BIT_12);                         // Configura el ADC a 12 bits
     adc1_config_channel_atten(DCinput, ADC_ATTEN_DB_12);  // Configura la atenuación para el canal 6 (GPIO 34)                        
     adc1_config_channel_atten(ACinput, ADC_ATTEN_DB_12);  // Configura la atenuación para el canal 5 (GPIO 33)
-    
+
+    esp_rom_gpio_pad_select_gpio(SDA);
     gpio_set_direction(SDA,GPIO_MODE_OUTPUT);
+    esp_rom_gpio_pad_select_gpio(SCL);
     gpio_set_direction(SCL,GPIO_MODE_OUTPUT);
+    esp_rom_gpio_pad_select_gpio(pin56k);
     gpio_set_direction(pin56k,GPIO_MODE_OUTPUT);
+    esp_rom_gpio_pad_select_gpio(pin100k);
     gpio_set_direction(pin100k,GPIO_MODE_OUTPUT);
+    esp_rom_gpio_pad_select_gpio(pin560k);
     gpio_set_direction(pin560k,GPIO_MODE_OUTPUT);
+    esp_rom_gpio_pad_select_gpio(pin1M);
     gpio_set_direction(pin1M,GPIO_MODE_OUTPUT);
 
+    esp_rom_gpio_pad_select_gpio(savePin);
     gpio_set_direction(savePin,GPIO_MODE_INPUT);
     gpio_set_pull_mode(savePin,GPIO_PULLDOWN_ONLY);
+    esp_rom_gpio_pad_select_gpio(sendPin);
     gpio_set_direction(sendPin,GPIO_MODE_INPUT);
     gpio_set_pull_mode(sendPin,GPIO_PULLDOWN_ONLY);
 
